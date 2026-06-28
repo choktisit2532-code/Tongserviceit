@@ -1,3 +1,5 @@
+const cors = require("cors");
+app.use(cors());
 const API = "https://nexinvoice-api.onrender.com";
 const express = require("express");
 const cors = require("cors");

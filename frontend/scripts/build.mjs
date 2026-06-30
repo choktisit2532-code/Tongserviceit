@@ -1,13 +1,14 @@
-import fs from 'node:fs/promises';
-import path from 'node:path';
+const apiBase = process.env.API_BASE_URL;
 
-const root = path.resolve(import.meta.dirname, '..');
-const src = path.join(root, 'src');
-const dist = path.join(root, 'dist');
-await fs.rm(dist, { recursive: true, force: true });
-await fs.cp(src, dist, { recursive: true });
-const apiBase = process.env.API_BASE_URL || 'http://localhost:3000/api';
-const config = `window.APP_CONFIG = ${JSON.stringify({ API_BASE_URL: apiBase })};\n`;
-await fs.writeFile(path.join(dist, 'config.js'), config, 'utf8');
-console.log(`Built frontend to ${dist}`);
-console.log(`API_BASE_URL=${apiBase}`);
+if (!apiBase && process.env.VERCEL) {
+  throw new Error(
+    "Missing API_BASE_URL in Vercel Environment Variables"
+  );
+}
+
+const resolvedApiBase =
+  apiBase || "http://localhost:3000/api";
+
+const config = `window.APP_CONFIG = ${JSON.stringify({
+  API_BASE_URL: resolvedApiBase
+})};\n`;
